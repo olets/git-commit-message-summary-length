@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+
+# Henry Bley-Vroman
+# git message-length
+#
+# INSTALLATION
+#
+# Save this script to a location in your $PATH
+#
+# USAGE
+#
+# For a friendly message with the length of the last commit
+#   git message-length
+# For a friendly message with the length of the nth commit
+#   git message-length --skip <n>
+#
+# To output only the character count
+#   git message-length --abbrev
+#
+# If the length is under 50 characters, the message is STDOUT;
+# if it is over 50 characters, the message is STDERR.
+# This can be leveraged to output only warnings. For example `./git/hooks/post-commit`:
+#   #!/usr/bin/env sh
+#   git message-length &1>/dev/null
+
+nc="\\033[0m"
+red="\\033[0;31m"
+yellow="\\033[0;33m"
+bg_red="\\033[1;30;41m"
+bg_yellow="\\033[1;30;43m"
+
+log() {
+  echo -e "$*"
+}
+
+warn() {
+  echo -e "${yellow}$*${nc}" >&2
+}
+
+main() {
+  local -i char_count long skip_n verbose
+  local message message_first_line
+
+  char_count=0
+  long=0
+  skip_n=0
+  verbose=0
+
+  while (( $# )); do
+    case $1 in
+      --abbrev)
+        unset verbose
+        shift
+        ;;
+      --skip=*)
+        skip_n="${1#--skip=}"
+        shift
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
+  message="$(git log --format=%B -1 --skip=$skip_n)"
+  message_first_line="$(echo -n "$message" | head -1)"
+  
+  # `wc -m` has a whitespace prefix, but that's auto-trimmed
+  # because of `char_count`'s integer type
+  char_count=$(echo -n "$message_first_line" | wc -m)
+
+  if (( verbose )); then
+    log "$char_count"
+    return
+  fi
+
+  long=$(( char_count > 70 ))
+
+  if (( char_count < 50 )); then
+    log "$char_count characters in commit message"
+    return
+  fi
+
+  if (( long )); then
+    echo -e "${red}$char_count characters in commit message${nc}" >&2
+  else
+    echo -e "${yellow}$char_count characters in commit message${nc}" >&2
+  fi
+
+  # Characters 50-70 are highlighted in yellow, characters after 70 are highlighted in red
+  echo -e "${message_first_line:0:50}${bg_yellow}${message_first_line:50:20}${bg_red}${message_first_line:70}${nc}" >&2
+
+  return "$long"
+}
+
+main "$@"
