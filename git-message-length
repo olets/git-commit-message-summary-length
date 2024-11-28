@@ -43,6 +43,10 @@ __git_message_length_log_result() {
   __git_message_length_error "$message_length characters in commit message"
 }
 
+__git_message_length_version() {
+  'builtin' 'printf' "1.0.0-beta.1\\n"
+}
+
 main() {
   'builtin' 'local' -i abbrev message_length
   'builtin' 'local' message ref
@@ -55,6 +59,12 @@ main() {
       --abbrev)
         abbrev=1
         'builtin' 'shift'
+        ;;
+      "version"|\
+      "--version"|\
+      "-v")
+        __git_message_length_version
+        return
         ;;
       *)  
         if [[ -n "$ref" ]]; then
