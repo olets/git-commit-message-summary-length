@@ -62,44 +62,51 @@ Option | Default if not configured | Configures
 
 ## Examples
 
-Check the length of the checked-out commit:
-
-```shell
-git commit-message-summary-length
-```
-
-Print `ok` if `origin/main`'s second ancestor commit's message is 47 characters long or shorter:
-
-```shell
-git commit-message-summary-length --error-after=47 --log-level=0 origin/main~2 && echo ok
-```
-
-Configure for GitHub, which in some parts of the web UI truncates messages longer than 72 characters to 69 characters:
-
-```shell
-git config --global commit-message-summary-length.warnafter 69
-git commit-message-summary-length
-```
-
-Automatically run after every commit:
-
-1. Configure `git config --global init.templatedir` if you haven't already.
+- Check the length of the checked-out commit:
 
     ```shell
-    git config --global init.templatedir
-
-    # if no output
-    git config --global init.templatedir ~/.config/.git-templates`
+    git commit-message-summary-length
     ```
 
-2. Add a `post-commit` hook file, and add a git-commit-message-summary-length command to it.
+- Print `ok` if `origin/main`'s second ancestor commit's message is 47 characters long or shorter:
 
     ```shell
-    mkdir -p $(git config --global init.templatedir)/hooks
-    echo "git commit-message-summary-length" >> $(git config --global init.templatedir)/hooks/post-commit
-    chmod +x $(git config --global init.templatedir)/hooks/post-commit
+    git commit-message-summary-length --error-after=47 --log-level=0 origin/main~2 && echo ok
     ```
 
+- Configure for GitHub, which in some parts of the web UI truncates messages longer than 72 characters to 69 characters:
+
+    ```shell
+    git config --global commit-message-summary-length.warnafter 69
+    git commit-message-summary-length
+    ```
+
+- Automatically run after every commit:
+
+    1. Configure `git config --global init.templatedir` if you haven't already.
+
+        ```shell
+        git config --global init.templatedir
+
+        # if no output
+        git config --global init.templatedir ~/.config/.git-templates`
+        ```
+
+    2. Add a `post-commit` hook file, and add a git-commit-message-summary-length command to it.
+
+        ```shell
+        mkdir -p $(git config --global init.templatedir)/hooks
+        echo "git commit-message-summary-length" >> $(git config --global init.templatedir)/hooks/post-commit
+        chmod +x $(git config --global init.templatedir)/hooks/post-commit
+        ```
+
+- Type less:
+
+    ```shell
+    git config --global alias.l commit-message-summary-length
+    ```
+
+    Or if your shell has native abbreviations (like fish) or an abbreviations plugin (like zsh's [zsh-abbr](https://zsh-abbr.olets.dev), by the creator of git-commit-message-summary-length), create an abbreviation for `git commit-message-summary-length`. (`l` is nice and short.)
 
 ## Installation
 
