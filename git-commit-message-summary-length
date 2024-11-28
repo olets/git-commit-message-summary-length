@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# git-message-length
-# https://github.com/olets/git-message-length
+# git-commit-message-summary-length
+# https://github.com/olets/git-commit-message-summary-length
 # Copyright (©) 2017 Henry Bley-Vroman
 
 declare -A __git_message_length_colors=(
@@ -73,9 +73,9 @@ main() {
   warn_after=50
 
   config=(
-    ["log_level"]="$(git config message-length.loglevel)"
-    ["warn_after"]="$(git config message-length.warnafter)"
-    ["error_after"]="$(git config message-length.errorafter)"
+    ["log_level"]="$(git config commit-message-summary-length.loglevel)"
+    ["warn_after"]="$(git config commit-message-summary-length.warnafter)"
+    ["error_after"]="$(git config commit-message-summary-length.errorafter)"
   )
 
   for option in "${!config[@]}"; do
@@ -87,7 +87,7 @@ main() {
   done
 
   if (( warn_after > error_after )); then
-    __git_message_length_log "message-length.errorafter must be greater than or equal to message-length.warnafter"
+    __git_message_length_log "commit-message-summary-length.errorafter must be greater than or equal to commit-message-summary-length.warnafter"
     return 1
   fi
 
