@@ -1,95 +1,85 @@
 #!/usr/bin/env bash
 
-# Henry Bley-Vroman
-# git message-length
-#
-# INSTALLATION
-#
-# Save this script to a location in your $PATH
-#
-# USAGE
-#
-# For a friendly message with the length of the last commit
-#   git message-length
-# For a friendly message with the length of the nth commit
-#   git message-length --skip <n>
-#
-# To output only the character count
-#   git message-length --abbrev
-#
-# If the length is under 50 characters, the message is STDOUT;
-# if it is over 50 characters, the message is STDERR.
-# This can be leveraged to output only warnings. For example `./git/hooks/post-commit`:
-#   #!/usr/bin/env sh
-#   git message-length &1>/dev/null
+# git-message-length
+# https://github.com/olets/git-message-length
+# Copyright (©) 2017 Henry Bley-Vroman
 
-nc="\\033[0m"
-red="\\033[0;31m"
-yellow="\\033[0;33m"
-bg_red="\\033[1;30;41m"
-bg_yellow="\\033[1;30;43m"
+declare -A __git_message_length_colors=(
+  ["nc"]="\\033[0m"
+  ["red"]="\\033[0;31m"
+  ["yellow"]="\\033[0;33m"
+  ["bg_red"]="\\033[1;30;41m"
+  ["bg_yellow"]="\\033[1;30;43m"
+)
 
-log() {
-  echo -e "$*"
+__git_message_length_log() {
+  'builtin' 'printf' "%s\\n" "$*"
 }
 
-warn() {
-  echo -e "${yellow}$*${nc}" >&2
+__git_message_length_error() {
+  'builtin' 'echo' -e "${__git_message_length_colors["red"]}$*${__git_message_length_colors["nc"]}"
+}
+
+__git_message_length_warn() {
+  'builtin' 'echo' -e "${__git_message_length_colors["yellow"]}$*${__git_message_length_colors["nc"]}"
+}
+
+__git_message_length_log_highlighted_message() {
+  # Characters 50-70 are highlighted in yellow, characters after 70 are highlighted in red
+  'builtin' 'echo' -e "${message:0:50}${__git_message_length_colors["bg_yellow"]}${message:50:22}${__git_message_length_colors["bg_red"]}${message:72}${__git_message_length_colors["nc"]}"
+}
+
+__git_message_length_log_result() {
+  if (( message_length <= 50 )); then
+    __git_message_length_log "$message_length characters in commit message"
+    return
+  fi
+
+  if (( message_length <= 72 )); then
+    __git_message_length_warn "$message_length characters in commit message"
+    return
+  fi
+
+  __git_message_length_error "$message_length characters in commit message"
 }
 
 main() {
-  local -i char_count long skip_n verbose
-  local message message_first_line
+  local -i abbrev message_length
+  local message ref
 
-  char_count=0
-  long=0
-  skip_n=0
-  verbose=0
+  abbrev=0
+  ret=0
 
   while (( $# )); do
     case $1 in
       --abbrev)
-        unset verbose
+        abbrev=1
         shift
         ;;
-      --skip=*)
-        skip_n="${1#--skip=}"
-        shift
-        ;;
-      *)
+      *)  
+        if [[ -n "$ref" ]]; then
+          'builtin' 'printf' "Unsupported option \`%s\`. Only one ref can be specified\\n" "$1"
+          return 2
+        fi
+
+        ref="$1"
         shift
         ;;
     esac
   done
-  message="$(git log --format=%B -1 --skip=$skip_n)"
-  message_first_line="$(echo -n "$message" | head -1)"
-  
-  # `wc -m` has a whitespace prefix, but that's auto-trimmed
-  # because of `char_count`'s integer type
-  char_count=$(echo -n "$message_first_line" | wc -m)
 
-  if (( verbose )); then
-    log "$char_count"
-    return
+  [[ -z "$ref" ]] && ref=HEAD
+
+  message=$(git log --format=%B "$ref" | head -1)
+  message_length=$(echo -n "$message" | wc -m)
+
+  if (( abbrev )); then
+    __git_message_length_log $message_length
+    return $(( message_length > 72 ))
   fi
 
-  long=$(( char_count > 70 ))
-
-  if (( char_count < 50 )); then
-    log "$char_count characters in commit message"
-    return
-  fi
-
-  if (( long )); then
-    echo -e "${red}$char_count characters in commit message${nc}" >&2
-  else
-    echo -e "${yellow}$char_count characters in commit message${nc}" >&2
-  fi
-
-  # Characters 50-70 are highlighted in yellow, characters after 70 are highlighted in red
-  echo -e "${message_first_line:0:50}${bg_yellow}${message_first_line:50:20}${bg_red}${message_first_line:70}${nc}" >&2
-
-  return "$long"
+  __git_message_length_log_highlighted_message "$message"
+  __git_message_length_log_result "$message" || return 1
 }
 
 main "$@"
