@@ -60,6 +60,11 @@ main() {
         abbrev=1
         'builtin' 'shift'
         ;;
+      "help"|\
+      "--help")
+        'command' 'man' git-activity 2>/dev/null || 'command' 'man' "$('command' 'dirname' -- "${BASH_SOURCE[0]}")/man/man1/git-activity.1"
+        return
+        ;;
       "version"|\
       "--version"|\
       "-v")

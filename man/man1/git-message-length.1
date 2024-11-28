@@ -1,0 +1,45 @@
+.TH "GIT-message-length" 1 "September 25 2024" "git-message-length 1.1.1" "User Commands"
+.SH NAME
+git-message-length \- Check a commit's message's length
+.SH SYNOPSIS
+
+\fBgit message-length\fR
+
+\fBgit message-length\fR (\fBhelp\fR | \fB--help\fR)
+
+\fBgit message-length\fR (\fB--version\fR | \fB-v\fR | \fBversion\fR)
+
+.SH DESCRIPTION
+\fBgit-message-length\fR Check a commit's message's length.
+
+.SH COMMANDS
+The following commands are available:
+
+.IP \(bu
+\fBgit message length\fR
+
+Check a commit's message's length.
+
+Logs the commit message.
+Characters 51-70 are highlighted in yellow.
+Characters after 70 are highlighted in red.
+
+Logs the length of the latest commit message.
+
+Succeeds if the message is 72 characters long, or shorter.
+
+Fails if the message is 73 characters long, or longer.
+
+.IP \(bu
+\fBgit message-length\fR (\fBhelp\fR | \fB--help\fR)
+
+Show this document.
+
+.IP \(bu
+\fBgit message-length\fR (\fB--version\fR | \fB-v\fR | \fBversion\fR)
+
+Show the current version.
+
+.SH AUTHORS
+
+Henry Bley\-Vroman <olets@olets.dev>
