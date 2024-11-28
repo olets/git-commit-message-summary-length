@@ -93,8 +93,8 @@ main() {
 
   while (( $# )); do
     case $1 in
-      --log-level=*)
-        log_level="${1:12}"
+      --error-after=*)
+        error_after="${1:14}"
         'builtin' 'shift'
         ;;
       "help"|\
@@ -102,11 +102,19 @@ main() {
         'command' 'man' git-activity 2>/dev/null || 'command' 'man' "$('command' 'dirname' -- "${BASH_SOURCE[0]}")/man/man1/git-activity.1"
         return
         ;;
+      --log-level=*)
+        log_level="${1:12}"
+        'builtin' 'shift'
+        ;;
       "version"|\
       "--version"|\
       "-v")
         __git_message_length_version
         return
+        ;;
+      --warn-after=*)
+        warn_after="${1:13}"
+        'builtin' 'shift'
         ;;
       *)
         # follows `git log -1 @~ @~2`'s only logging `@~`

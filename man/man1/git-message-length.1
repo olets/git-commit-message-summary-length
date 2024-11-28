@@ -3,7 +3,7 @@
 git-message-length \- Check a commit's message's length
 .SH SYNOPSIS
 
-\fBgit message-length\fR [\fB\-\-log-level\fR=\<\fIlog level\fR\>] [\<\fIrevision\fR\>]
+\fBgit message-length\fR [\fB\-\-error-after\fR=\<\fIlength\fR\>] [\fB\-\-log-level\fR=\<\fIlog level\fR\>] [\fB\-\-warn-after\fR=\<\fIlength\fR\>] [\<\fIrevision\fR\>]
 
 \fBgit message-length\fR (\fBhelp\fR | \fB--help\fR)
 
@@ -16,13 +16,15 @@ git-message-length \- Check a commit's message's length
 The following commands are available:
 
 .IP \(bu
-\fBgit message-length\fR [\fB\-\-log-level\fR=\<\fIlog level\fR\>] [\<\fIrevision\fR\>]
+\fBgit message-length\fR [\fB\-\-error-after\fR=\<\fIlength\fR\>] [\fB\-\-log-level\fR=\<\fIlog level\fR\>] [\fB\-\-warn-after\fR=\<\fIlength\fR\>] [\<\fIrevision\fR\>]
 
 Check a commit's message's length.
 
-Succeeds if the message is 72 characters long, or shorter.
+Succeeds if the message length is less than or equal to the
+"error after" length (default 72).
 
-Fails if the message is 73 characters long, or longer.
+Fails if the message length is greater than the "error after" length
+(default 72).
 
 \<\fIrevision\fR\> is any revision parameter accepted by \`git log -1\`.
 
@@ -32,11 +34,13 @@ If the log level (default 3) is 1, only the integer length of the commit
 message is logged.
 
 If the log level (default 3) is 2 or 3, the length of the commit message is
-logged in a sentence, colored yellow if the message is between 50 and 72
-characters long, colored red if the message is more than 72 characters long.
+logged in a sentence, colored yellow if the message length is between the
+"warn after" length (default 50) and the "error after" length (default 72),
+or colored red if the message length is greater than the "error after" length.
 
-If the log level is 3 (default) the commit message is logged. Characters 51-72
-are highlighted in yellow. Characters after 72 are highlighted in red.
+If the log level is 3 (default) the commit message is logged. Characters
+between "warn after" and "error after" are highlighted in yellow. Characters
+after "warn after" are highlighted in red.
 
 .IP \(bu
 \fBgit message-length\fR (\fBhelp\fR | \fB--help\fR)
