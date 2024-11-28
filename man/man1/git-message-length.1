@@ -3,7 +3,7 @@
 git-message-length \- Check a commit's message's length
 .SH SYNOPSIS
 
-\fBgit message-length\fR [\fB\-\-log-level\fR=\<\fIlog level\fR\>]
+\fBgit message-length\fR [\fB\-\-log-level\fR=\<\fIlog level\fR\>] [\<\fIrevision\fR\>]
 
 \fBgit message-length\fR (\fBhelp\fR | \fB--help\fR)
 
@@ -16,13 +16,15 @@ git-message-length \- Check a commit's message's length
 The following commands are available:
 
 .IP \(bu
-\fBgit message-length\fR [\fB\-\-log-level\fR=\<\fIlog level\fR\>]
+\fBgit message-length\fR [\fB\-\-log-level\fR=\<\fIlog level\fR\>] [\<\fIrevision\fR\>]
 
 Check a commit's message's length.
 
 Succeeds if the message is 72 characters long, or shorter.
 
 Fails if the message is 73 characters long, or longer.
+
+\<\fIrevision\fR\> is any revision parameter accepted by \`git log -1\`.
 
 If the log level (default 3) is 0, the command has no output.
 
