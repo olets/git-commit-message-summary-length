@@ -3,7 +3,7 @@
 git-message-length \- Check a commit's message's length
 .SH SYNOPSIS
 
-\fBgit message-length\fR
+\fBgit message-length\fR [\fB\-\-log-level\fR=\<\fIlog level\fR\>]
 
 \fBgit message-length\fR (\fBhelp\fR | \fB--help\fR)
 
@@ -16,19 +16,25 @@ git-message-length \- Check a commit's message's length
 The following commands are available:
 
 .IP \(bu
-\fBgit message length\fR
+\fBgit message-length\fR [\fB\-\-log-level\fR=\<\fIlog level\fR\>]
 
 Check a commit's message's length.
-
-Logs the commit message.
-Characters 51-70 are highlighted in yellow.
-Characters after 70 are highlighted in red.
-
-Logs the length of the latest commit message.
 
 Succeeds if the message is 72 characters long, or shorter.
 
 Fails if the message is 73 characters long, or longer.
+
+If the log level (default 3) is 0, the command has no output.
+
+If the log level (default 3) is 1, only the integer length of the commit
+message is logged.
+
+If the log level (default 3) is 2 or 3, the length of the commit message is
+logged in a sentence, colored yellow if the message is between 50 and 72
+characters long, colored red if the message is more than 72 characters long.
+
+If the log level is 3 (default) the commit message is logged. Characters 51-72
+are highlighted in yellow. Characters after 72 are highlighted in red.
 
 .IP \(bu
 \fBgit message-length\fR (\fBhelp\fR | \fB--help\fR)
