@@ -46,6 +46,31 @@ Show this document.
 
 Show the current version.
 
+.SH CONFIGURATION
+
+Configure git-message-length in the \fBmessage-length\fR git-config
+section.
+
+Set options with \`git config [--global] message-length.<key> <value>\`.
+
+.IP \(bu
+\fBerrorafter\fR
+
+The message length after which git-message-length errors.
+72 if not otherwise configured.
+
+.IP \(bu
+\fBloglevel\fR
+
+The default log level. Supported values are 0, 1, 2, and 3.
+3 if not otherwise configured.
+
+.IP \(bu
+\fBwarnafter\fR
+
+The message length after which git-message-length errors.
+50 if not otherwise configured.
+
 .SH AUTHORS
 
 Henry Bley\-Vroman <olets@olets.dev>

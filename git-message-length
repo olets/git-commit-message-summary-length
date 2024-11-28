@@ -25,8 +25,15 @@ __git_message_length_warn() {
 }
 
 __git_message_length_log_highlighted_message() {
+  local -i diff error_after warn_after
+  local message
+
+  message="$1"
+  warn_after="$2"
+  error_after="$3"
+
   # Characters 50-70 are highlighted in yellow, characters after 70 are highlighted in red
-  'builtin' 'echo' -e "${message:0:50}${__git_message_length_colors["bg_yellow"]}${message:50:22}${__git_message_length_colors["bg_red"]}${message:72}${__git_message_length_colors["nc"]}"
+  'builtin' 'echo' -e "${message:0:$warn_after}${__git_message_length_colors["bg_yellow"]}${message:$warn_after:$(( error_after - warn_after ))}${__git_message_length_colors["bg_red"]}${message:$error_after}${__git_message_length_colors["nc"]}"
 }
 
 __git_message_length_log_result() {
@@ -54,13 +61,35 @@ __git_message_length_version() {
 }
 
 main() {
-  'builtin' 'local' -i error log_level message_length warn
+  'builtin' 'local' -i error error_after log_level message_length warn warn_after
   'builtin' 'local' message revision
+  'builtin' 'local' -A config
 
   error=0
+  error_after=72
   log_level=3
   ret=0
   warn=0
+  warn_after=50
+
+  config=(
+    ["log_level"]="$(git config message-length.loglevel)"
+    ["warn_after"]="$(git config message-length.warnafter)"
+    ["error_after"]="$(git config message-length.errorafter)"
+  )
+
+  for option in "${!config[@]}"; do
+    value="${config[$option]}"
+    
+    [[ -z "$value" ]] && continue
+
+    declare "$option"="$value"
+  done
+
+  if (( warn_after > error_after )); then
+    __git_message_length_log "message-length.errorafter must be greater than or equal to message-length.warnafter"
+    return 1
+  fi
 
   while (( $# )); do
     case $1 in
@@ -96,9 +125,9 @@ main() {
   [[ -z "$message" ]] && return 128 # exit code of `git log @` when not in a git repo
   message_length=$(echo -n "$message" | wc -m)
 
-  if (( message_length > 72 )); then
+  if (( message_length > error_after )); then
     error=1
-  elif (( message_length > 50 )); then
+  elif (( message_length > warn_after )); then
     warn=1
   fi
 
@@ -117,8 +146,7 @@ main() {
   (( log_level == 2 )) && 'builtin' 'return' "$error"
 
   # log level 3 prints the message, highlighted
-  __git_message_length_log_highlighted_message "$message"
-
+  __git_message_length_log_highlighted_message "$message" "$warn_after" "$error_after"
   'builtin' 'return' "$error"
 }
 
