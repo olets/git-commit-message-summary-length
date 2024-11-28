@@ -32,20 +32,20 @@ __git_message_length_log_highlighted_message() {
 __git_message_length_log_result() {
   if (( message_length <= 50 )); then
     __git_message_length_log "$message_length characters in commit message"
-    return
+    'builtin' 'return'
   fi
 
   if (( message_length <= 72 )); then
     __git_message_length_warn "$message_length characters in commit message"
-    return
+    'builtin' 'return'
   fi
 
   __git_message_length_error "$message_length characters in commit message"
 }
 
 main() {
-  local -i abbrev message_length
-  local message ref
+  'builtin' 'local' -i abbrev message_length
+  'builtin' 'local' message ref
 
   abbrev=0
   ret=0
@@ -54,16 +54,16 @@ main() {
     case $1 in
       --abbrev)
         abbrev=1
-        shift
+        'builtin' 'shift'
         ;;
       *)  
         if [[ -n "$ref" ]]; then
           'builtin' 'printf' "Unsupported option \`%s\`. Only one ref can be specified\\n" "$1"
-          return 2
+          'builtin' 'return' 2
         fi
 
         ref="$1"
-        shift
+        'builtin' 'shift'
         ;;
     esac
   done
@@ -75,11 +75,11 @@ main() {
 
   if (( abbrev )); then
     __git_message_length_log $message_length
-    return $(( message_length > 72 ))
+    'builtin' 'return' $(( message_length > 72 ))
   fi
 
   __git_message_length_log_highlighted_message "$message"
-  __git_message_length_log_result "$message" || return 1
+  __git_message_length_log_result "$message" || 'builtin' 'return' 1
 }
 
 main "$@"
