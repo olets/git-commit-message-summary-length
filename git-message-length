@@ -55,7 +55,7 @@ __git_message_length_version() {
 
 main() {
   'builtin' 'local' -i error log_level message_length warn
-  'builtin' 'local' message ref
+  'builtin' 'local' message revision
 
   error=0
   log_level=3
@@ -79,21 +79,20 @@ main() {
         __git_message_length_version
         return
         ;;
-      *)  
-        if [[ -n "$ref" ]]; then
-          'builtin' 'printf' "Unsupported option \`%s\`. Only one ref can be specified\\n" "$1"
-          'builtin' 'return' 2
+      *)
+        # follows `git log -1 @~ @~2`'s only logging `@~`
+        if [[ -z "$revision" ]]; then
+          revision="$1"
         fi
 
-        ref="$1"
         'builtin' 'shift'
         ;;
     esac
   done
 
-  [[ -z "$ref" ]] && ref=HEAD
+  [[ -z "$revision" ]] && revision=HEAD
 
-  message=$(git log --format=%B "$ref" | head -1)
+  message=$(git log --format=%B "$revision" | head -1)
   [[ -z "$message" ]] && return 128 # exit code of `git log @` when not in a git repo
   message_length=$(echo -n "$message" | wc -m)
 
