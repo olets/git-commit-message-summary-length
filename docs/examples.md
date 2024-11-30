@@ -6,6 +6,12 @@
     git commit-message-summary-length
     ```
 
+1. Amend if the message is longer than you prefer:
+
+    ```shell
+    git commit-message-summary-length || git commit --amend
+    ```
+
 1. Print `ok` if `origin/main`'s second ancestor commit's message is 47 characters long or shorter:
 
     ```shell
