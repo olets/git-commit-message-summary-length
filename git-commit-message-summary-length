@@ -99,7 +99,7 @@ main() {
         ;;
       "help"|\
       "--help")
-        'command' 'man' git-activity 2>/dev/null || 'command' 'man' "$('command' 'dirname' -- "${BASH_SOURCE[0]}")/man/man1/git-activity.1"
+        'command' 'man' git-commit-message-summary-length 2>/dev/null || 'command' 'man' "$('command' 'dirname' -- "${BASH_SOURCE[0]}")/man/man1/git-commit-message-summary-length.1"
         return
         ;;
       --log-level=*)
