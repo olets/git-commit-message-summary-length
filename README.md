@@ -1,6 +1,6 @@
 # git-commit-message-summary-length ![GitHub release (latest by date)](https://img.shields.io/github/v/release/olets/git-commit-message-summary-length) ![GitHub commits since latest release](https://img.shields.io/github/commits-since/olets/git-commit-message-summary-length/latest)
 
-**git-commit-message-summary-length**: Check the length of a commit's message's summary (the first line of the commit's message).
+**git-commit-message-summary-length**: Check the length of a commit message's first line.
 
 ## Usage
 
