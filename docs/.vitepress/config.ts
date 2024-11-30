@@ -115,7 +115,7 @@ export default defineConfig({
       {
         property: "og:image",
         content:
-          "https://git-commit-message-summary-length.olets.dev/git-commit-message-summary-length-card.png",
+          "https://git-commit-message-summary-length.olets.dev/git-commit-message-summary-length-card.jpg",
       },
     ],
     ["meta", { property: "og:image:width", content: "1200" }],
@@ -127,7 +127,7 @@ export default defineConfig({
       {
         name: "twitter:image",
         content:
-          "https://git-commit-message-summary-length.olets.dev/git-commit-message-summary-length-card.png",
+          "https://git-commit-message-summary-length.olets.dev/git-commit-message-summary-length-card.jpg",
       },
     ],
 

@@ -2,7 +2,7 @@
 
 **git-commit-message-summary-length**: Check the length of a commit message's first line.
 
-![splash card](./docs/public/git-commit-message-summary-length-card.png)
+![splash card](./docs/public/git-commit-message-summary-length-card.jpg)
 
 ## In a nutshell
 
