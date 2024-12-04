@@ -2,15 +2,44 @@ import { defineConfig } from "vitepress";
 import { createTitle } from "vitepress/dist/client/shared.js";
 import markdownItFootnote from "markdown-it-footnote";
 
+const FALLBACK_META_IMAGE = "git-commit-message-summary-length-card.jpg";
 const TITLE = "git-commit-message-summary-length";
+const ORIGIN = "https://git-random.olets.dev";
+
+function href(path = "") {
+  // https://github.com/vuejs/vitepress/blob/452d6c77a6afa43faa245452e7d0b360e55a36fb/src/shared/shared.ts#L21-L22
+  const HASH_OR_QUERY_RE = /[?#].*$/;
+  const INDEX_OR_EXT_RE = /(?:(^|\/)index)?\.(?:md|html)$/;
+
+  // https://github.com/vuejs/vitepress/blob/452d6c77a6afa43faa245452e7d0b360e55a36fb/src/shared/shared.ts#L65-L69
+  function normalize(path) {
+    return decodeURI(path)
+      .replace(HASH_OR_QUERY_RE, "")
+      .replace(INDEX_OR_EXT_RE, "$1");
+  }
+
+  return new URL(normalize(path), ORIGIN).href;
+}
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   transformPageData(pageData, ctx) {
-    const description =
-      pageData.frontmatter?.description ?? ctx.siteConfig.site?.description;
+    let pageDescription = pageData.frontmatter?.description;
+    const pageHref = href(pageData.relativePath);
+    const pageImage = href(
+      pageData.frontmatter?.metaImage ?? FALLBACK_META_IMAGE
+    );
+    const pageTitle = createTitle(ctx.siteConfig.site, pageData);
 
-    const title = createTitle(ctx.siteConfig.site, pageData);
+    if (!pageDescription) {
+      pageDescription = ctx.siteConfig.site?.description;
+
+      if (pageHref !== href()) {
+        pageDescription = [ctx.siteConfig.site?.title, pageDescription]
+          .filter((v) => Boolean(v))
+          .join(": ");
+      }
+    }
 
     pageData.frontmatter.head ??= [];
 
@@ -18,33 +47,54 @@ export default defineConfig({
       [
         "meta",
         {
+          property: "og:image",
+          content: pageImage,
+        },
+      ],
+      [
+        "meta",
+        {
           name: "og:title",
-          content: title,
+          content: pageTitle,
+        },
+      ],
+      [
+        "meta",
+        {
+          property: "og:url",
+          content: pageHref,
+        },
+      ],
+      [
+        "meta",
+        {
+          name: "twitter:image",
+          content: pageImage,
         },
       ],
       [
         "meta",
         {
           name: "twitter:title",
-          content: title,
+          content: pageTitle,
         },
       ]
     );
 
-    if (description) {
+    if (pageDescription) {
       pageData.frontmatter.head.push(
         [
           "meta",
           {
             name: "og:description",
-            content: description,
+            content: pageDescription,
           },
         ],
         [
           "meta",
           {
             name: "twitter:description",
-            content: description,
+            content: pageDescription,
           },
         ]
       );
@@ -100,36 +150,13 @@ export default defineConfig({
     ],
 
     // social metas
-    // og:title and og:description are set dynamically in transformPageData
-    [
-      "meta",
-      {
-        property: "og:url",
-        content: "https://git-commit-message-summary-length.olets.dev/",
-      },
-    ],
+    // og:title, og:description, and og:url are set dynamically in transformPageData
     ["meta", { property: "og:site_name", content: TITLE }],
     ["meta", { property: "og:type", content: "website" }],
-    [
-      "meta",
-      {
-        property: "og:image",
-        content:
-          "https://git-commit-message-summary-length.olets.dev/git-commit-message-summary-length-card.jpg",
-      },
-    ],
     ["meta", { property: "og:image:width", content: "1200" }],
     ["meta", { property: "og:image:height", content: "630" }],
     // twitter:title and twitter:description are set dynamically in transformPageData
     ["meta", { name: "twitter:card", content: "summary_large_image" }],
-    [
-      "meta",
-      {
-        name: "twitter:image",
-        content:
-          "https://git-commit-message-summary-length.olets.dev/git-commit-message-summary-length-card.jpg",
-      },
-    ],
 
     // Analytics
     [
@@ -188,7 +215,7 @@ export default defineConfig({
   },
   srcExclude: ["vitepressignore"],
   sitemap: {
-    hostname: "https://git-commit-message-summary-length.olets.dev",
+    hostname: href(),
   },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
