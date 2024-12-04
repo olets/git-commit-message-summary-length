@@ -193,7 +193,7 @@ export default defineConfig({
       },
     ],
   ],
-  title: TITLE,
+  title: "g-c-m-s-l",
   description:
     "Cross-repo customizable Git activity log dotfile with CLI for viewing and filtering entries",
   // https://vitepress.dev/reference/site-config#titletemplate
