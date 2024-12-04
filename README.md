@@ -25,17 +25,17 @@ Fails if the commit message summary's length is greater than the "error after" l
 
 `revision` (default `HEAD`) is any [revision](https://git-scm.com/docs/gitrevisions) parameter accepted by `git log -1`.
 
-If the log level (default `3`)
+If the log level is `0`, the command has no output.
 
-- is `0`, the command has no output.
+If the log level is `1`, the integer length of the commit message is logged.
 
-- is `1`, the integer length of the commit message is logged.
+If the log level is `2`, the length of the commit message is logged in a sentence, colored yellow if the commit message summary's length is between "warn after" (default 50) and "error after" (default 72) characters long, or colored red if the message is more than "error after" (default 72) characters long.
 
-- is `2`, the length of the commit message is logged in a sentence, colored yellow if the commit message summary's length is between "warn after" (default 50) and "error after" (default 72) characters long, or colored red if the message is more than "error after" (default 72) characters long.
+If the log level is `3` (default)
 
-- is `3`,
-    - as with log level `2`, the length of the commit message is logged in a sentence, colored yellow if the commit message summary's length is between "warn after" (default 50) and "error after" (default 72) characters long, or colored red if the message is more than "error after" (default 72) characters long,
-    - and the commit message is logged, with characters after "warn after" and up to "error after" highlighted in yellow, and characters after "warn after" highlighted in red.
+- as with log level `2`, the length of the commit message is logged in a sentence, colored yellow if the commit message summary's length is between "warn after" (default 50) and "error after" (default 72) characters long, or colored red if the message is more than "error after" (default 72) characters long
+
+- and the commit message is logged, with characters after "warn after" and up to "error after" highlighted in yellow, and characters after "warn after" highlighted in red.
 
 ## Changelog
 
