@@ -4,7 +4,7 @@ import markdownItFootnote from "markdown-it-footnote";
 
 const FALLBACK_META_IMAGE = "git-commit-message-summary-length-card.jpg";
 const TITLE = "git-commit-message-summary-length";
-const ORIGIN = "https://git-random.olets.dev";
+const ORIGIN = "https://git-commit-message-summary-length.olets.dev";
 
 function href(path = "") {
   // https://github.com/vuejs/vitepress/blob/452d6c77a6afa43faa245452e7d0b360e55a36fb/src/shared/shared.ts#L21-L22
