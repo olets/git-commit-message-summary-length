@@ -1,0 +1,86 @@
+.TH "GIT-commit-message-summary-length" 1 "September 25 2024" "git-commit-message-summary-length 1.1.1" "User Commands"
+.SH NAME
+git-commit-message-summary-length \- Check a commit's message's length
+.SH SYNOPSIS
+
+\fBgit commit-message-summary-length\fR [\fB\-\-error-after\fR=\<\fIlength\fR\>] [\fB\-\-log-level\fR=\<\fIlog level\fR\>] [\fB\-\-warn-after\fR=\<\fIlength\fR\>] [\<\fIrevision\fR\>]
+
+\fBgit commit-message-summary-length\fR (\fBhelp\fR | \fB--help\fR)
+
+\fBgit commit-message-summary-length\fR (\fB--version\fR | \fB-v\fR | \fBversion\fR)
+
+.SH DESCRIPTION
+\fBgit-commit-message-summary-length\fR Check a commit's message's length.
+
+.SH COMMANDS
+The following commands are available:
+
+.IP \(bu
+\fBgit commit-message-summary-length\fR [\fB\-\-error-after\fR=\<\fIlength\fR\>] [\fB\-\-log-level\fR=\<\fIlog level\fR\>] [\fB\-\-warn-after\fR=\<\fIlength\fR\>] [\<\fIrevision\fR\>]
+
+Check a commit's message's length.
+
+Succeeds if the commit message summary's length is less than or equal to the
+"error after" length (default 72).
+
+Fails if the commit message summary's length is greater than the "error after" length
+(default 72).
+
+\<\fIrevision\fR\> is any revision parameter accepted by \`git log -1\`.
+
+If the log level (default 3) is 0, the command has no output.
+
+If the log level (default 3) is 1, only the integer length of the commit
+message is logged.
+
+If the log level (default 3) is 2 or 3, the length of the commit message is
+logged in a sentence, colored yellow if the commit message summary's length is between the
+"warn after" length (default 50) and the "error after" length (default 72),
+or colored red if the commit message summary's length is greater than the "error after" length.
+
+If the log level is 3 (default) the commit message is logged. Characters
+between "warn after" and "error after" are highlighted in yellow. Characters
+after "warn after" are highlighted in red.
+
+.IP \(bu
+\fBgit commit-message-summary-length\fR (\fBhelp\fR | \fB--help\fR)
+
+Show this document.
+
+.IP \(bu
+\fBgit commit-message-summary-length\fR (\fB--version\fR | \fB-v\fR | \fBversion\fR)
+
+Show the current version.
+
+.SH CONFIGURATION
+
+Configure git-commit-message-summary-length in the \fBcommit-message-summary-length\fR git-config
+section.
+
+Set options with \`git config [--global] commit-message-summary-length.<key> <value>\`.
+
+.IP \(bu
+\fBerrorafter\fR
+
+The commit message summary's length after which git-commit-message-summary-length errors.
+72 if not otherwise configured.
+
+.IP \(bu
+\fBloglevel\fR
+
+The default log level. Supported values are 0, 1, 2, and 3.
+3 if not otherwise configured.
+
+.IP \(bu
+\fBwarnafter\fR
+
+The commit message summary's length after which git-commit-message-summary-length errors.
+50 if not otherwise configured.
+
+.SH SEE ALSO
+
+git(1), git-log(1)
+
+.SH AUTHORS
+
+Henry Bley\-Vroman <olets@olets.dev>

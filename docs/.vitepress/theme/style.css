@@ -1,0 +1,9 @@
+/* VitePress overrides
+  cannot be in a Tailwind layer */
+@import "default-theme-overrides.css";
+@import "site-specific.css";
+
+/* Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

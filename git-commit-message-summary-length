@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+
+# git-commit-message-summary-length
+# https://github.com/olets/git-commit-message-summary-length
+# Copyright (©) 2017 Henry Bley-Vroman
+
+declare -A __git_message_length_colors=(
+  ["nc"]="\\033[0m"
+  ["red"]="\\033[0;31m"
+  ["yellow"]="\\033[0;33m"
+  ["bg_red"]="\\033[1;30;41m"
+  ["bg_yellow"]="\\033[1;30;43m"
+)
+
+__git_message_length_log() {
+  'builtin' 'printf' "%s\\n" "$*"
+}
+
+__git_message_length_error() {
+  'builtin' 'echo' -e "${__git_message_length_colors["red"]}$*${__git_message_length_colors["nc"]}"
+}
+
+__git_message_length_warn() {
+  'builtin' 'echo' -e "${__git_message_length_colors["yellow"]}$*${__git_message_length_colors["nc"]}"
+}
+
+__git_message_length_log_highlighted_message() {
+  local -i diff error_after warn_after
+  local message
+
+  message="$1"
+  warn_after="$2"
+  error_after="$3"
+
+  # Characters 50-70 are highlighted in yellow, characters after 70 are highlighted in red
+  'builtin' 'echo' -e "${message:0:$warn_after}${__git_message_length_colors["bg_yellow"]}${message:$warn_after:$(( error_after - warn_after ))}${__git_message_length_colors["bg_red"]}${message:$error_after}${__git_message_length_colors["nc"]}"
+}
+
+__git_message_length_log_result() {
+  'builtin' 'local' -i error message_length warn
+
+  message_length="$1"
+  warn="$2"
+  error="$3"
+
+  if (( error )); then
+    __git_message_length_error "$message_length characters in commit message"
+    'builtin' 'return'
+  fi
+
+  if (( warn )); then
+    __git_message_length_warn "$message_length characters in commit message"
+    'builtin' 'return'
+  fi
+
+  __git_message_length_log "$message_length characters in commit message"
+}
+
+__git_message_length_version() {
+  __git_message_length_log "1.0.0-beta.1"
+}
+
+main() {
+  'builtin' 'local' -i error error_after log_level message_length warn warn_after
+  'builtin' 'local' message revision
+  'builtin' 'local' -A config
+
+  error=0
+  error_after=72
+  log_level=3
+  ret=0
+  warn=0
+  warn_after=50
+
+  config=(
+    ["log_level"]="$(git config commit-message-summary-length.loglevel)"
+    ["warn_after"]="$(git config commit-message-summary-length.warnafter)"
+    ["error_after"]="$(git config commit-message-summary-length.errorafter)"
+  )
+
+  for option in "${!config[@]}"; do
+    value="${config[$option]}"
+    
+    [[ -z "$value" ]] && continue
+
+    declare "$option"="$value"
+  done
+
+  if (( warn_after > error_after )); then
+    __git_message_length_log "commit-message-summary-length.errorafter must be greater than or equal to commit-message-summary-length.warnafter"
+    return 1
+  fi
+
+  while (( $# )); do
+    case $1 in
+      --error-after=*)
+        error_after="${1:14}"
+        'builtin' 'shift'
+        ;;
+      "help"|\
+      "--help")
+        'command' 'man' git-commit-message-summary-length 2>/dev/null || 'command' 'man' "$('command' 'dirname' -- "${BASH_SOURCE[0]}")/man/man1/git-commit-message-summary-length.1"
+        return
+        ;;
+      --log-level=*)
+        log_level="${1:12}"
+        'builtin' 'shift'
+        ;;
+      "version"|\
+      "--version"|\
+      "-v")
+        __git_message_length_version
+        return
+        ;;
+      --warn-after=*)
+        warn_after="${1:13}"
+        'builtin' 'shift'
+        ;;
+      *)
+        # follows `git log -1 @~ @~2`'s only logging `@~`
+        if [[ -z "$revision" ]]; then
+          revision="$1"
+        fi
+
+        'builtin' 'shift'
+        ;;
+    esac
+  done
+
+  [[ -z "$revision" ]] && revision=HEAD
+
+  message=$(git log --format=%B "$revision" | head -1)
+  [[ -z "$message" ]] && return 128 # exit code of `git log @` when not in a git repo
+  message_length=$(echo -n "$message" | wc -m)
+
+  if (( message_length > error_after )); then
+    error=1
+  elif (( message_length > warn_after )); then
+    warn=1
+  fi
+
+  # log level 0 is silent
+  (( log_level == 0 )) && 'builtin' 'return' "$error"
+
+  # log level 1 prints the length
+  if (( log_level < 2 )); then
+    __git_message_length_log $message_length
+    'builtin' 'return' "$error"
+  fi
+
+  # log levels 2 and 3 print the length in a styled sentence
+  __git_message_length_log_result "$message_length" "$warn" "$error"
+
+  (( log_level == 2 )) && 'builtin' 'return' "$error"
+
+  # log level 3 prints the message, highlighted
+  __git_message_length_log_highlighted_message "$message" "$warn_after" "$error_after"
+  'builtin' 'return' "$error"
+}
+
+main "$@"
