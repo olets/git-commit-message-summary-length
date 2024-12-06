@@ -37,6 +37,10 @@ If the log level is `3` (default)
 
 - and the commit message is logged, with characters after "warn after" and up to "error after" highlighted in yellow, and characters after "warn after" highlighted in red.
 
+## Documentation
+
+https://git-commit-message-summary-length.olets.dev
+
 ## Changelog
 
 See the [CHANGELOG](CHANGELOG.md) file.
