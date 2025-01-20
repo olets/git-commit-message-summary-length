@@ -1,23 +1,12 @@
 import { defineConfig } from "vitepress";
-import { createTitle } from "vitepress/dist/client/shared.js";
 import markdownItFootnote from "markdown-it-footnote";
+import { createTitle, normalize } from "vitepress/dist/client/shared.js";
 
 const FALLBACK_META_IMAGE = "git-commit-message-summary-length-card.jpg";
 const TITLE = "git-commit-message-summary-length";
 const ORIGIN = "https://git-commit-message-summary-length.olets.dev";
 
 function href(path = "") {
-  // https://github.com/vuejs/vitepress/blob/452d6c77a6afa43faa245452e7d0b360e55a36fb/src/shared/shared.ts#L21-L22
-  const HASH_OR_QUERY_RE = /[?#].*$/;
-  const INDEX_OR_EXT_RE = /(?:(^|\/)index)?\.(?:md|html)$/;
-
-  // https://github.com/vuejs/vitepress/blob/452d6c77a6afa43faa245452e7d0b360e55a36fb/src/shared/shared.ts#L65-L69
-  function normalize(path) {
-    return decodeURI(path)
-      .replace(HASH_OR_QUERY_RE, "")
-      .replace(INDEX_OR_EXT_RE, "$1");
-  }
-
   return new URL(normalize(path), ORIGIN).href;
 }
 
@@ -27,7 +16,7 @@ export default defineConfig({
     let pageDescription = pageData.frontmatter?.description;
     const pageHref = href(pageData.relativePath);
     const pageImage = href(
-      pageData.frontmatter?.metaImage ?? FALLBACK_META_IMAGE
+      pageData.frontmatter?.metaImage ?? FALLBACK_META_IMAGE,
     );
     const pageTitle = createTitle(ctx.siteConfig.site, pageData);
 
@@ -78,7 +67,7 @@ export default defineConfig({
           name: "twitter:title",
           content: pageTitle,
         },
-      ]
+      ],
     );
 
     if (pageDescription) {
@@ -96,7 +85,7 @@ export default defineConfig({
             name: "twitter:description",
             content: pageDescription,
           },
-        ]
+        ],
       );
     }
   },
