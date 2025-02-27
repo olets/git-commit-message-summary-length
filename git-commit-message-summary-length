@@ -57,7 +57,7 @@ __git_message_length_log_result() {
 }
 
 __git_message_length_version() {
-  __git_message_length_log "1.0.0"
+  __git_message_length_log "1.0.1"
 }
 
 main() {
