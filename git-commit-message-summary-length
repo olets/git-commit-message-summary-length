@@ -129,7 +129,7 @@ main() {
 
   [[ -z "$revision" ]] && revision=HEAD
 
-  message=$(git log --format=%B "$revision" | head -1)
+  message=$(git log -1 --format=%s "$revision")
   [[ -z "$message" ]] && return 128 # exit code of `git log @` when not in a git repo
   message_length=$(echo -n "$message" | wc -m)
 
